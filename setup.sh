@@ -25,11 +25,36 @@ function setup(){
 	if [ -z $(ls "$curr"/.zshrc) ];then
 		curl -L "$url"/.antigenrc > ~/.antigenrc
 		curl -L "$url"/.zshrc > ~/.zshrc
+		if [ -z $(ls ~/.xinitrc) ];then
+			curl -L "$url"/.xinitrc > ~/.xinitrc
+		else
+			mv ~/.xinitrc ~/.xinitrc.bak
+			curl -L "$url"/.xinitrc > ~/.xinitrc
+		fi
+		if [ -z $(ls ~/.devilspie) ];then
+			mkdir ~/.devilspie
+			curl -L "$url"/opacity.ds > ~/.devilspie/opacity.ds
+		else
+			curl -L "$url"/opacity.ds > ~/.devilspie/opacity.ds
+		fi
 	else
 		cp "$curr"/{.zshrc,.antigenrc} ~/
+		if [ -z $(ls ~/.xinitrc) ];then
+			cp "$curr"/.xinitrc > ~/
+		else
+			mv ~/.xinitrc ~/.xinitrc.bak
+			cp "$curr"/.xinitrc > ~/
+		fi
+		if [ -z $(ls ~/.devilspie) ];then
+			mkdir ~/.devilspie
+			cp "$curr"/opacity.ds ~/.devilspie/
+		else
+			cp "$curr"/opacity.ds ~/.devilspie/
+		fi
 	fi
 }
-sudo pacman -Sy curl zsh
+yay -S transset-df
+sudo pacman -Sy curl zsh xcompmgr devilspie
 select_antigen
 setup
 echo "Set default shell..."

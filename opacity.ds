@@ -1,0 +1,9 @@
+( if
+( or
+( contains ( window_class ) "TelegramDesktop" )
+( contains ( application_name ) "Subl" )
+)
+( begin
+( spawn_async (str "transset-df -i " (window_xid) " 0.95" ))
+)
+)
