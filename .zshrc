@@ -1,3 +1,8 @@
+if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+  exec startx
+  dbus-update-activation-environment --systemd --all
+fi
+
 path+=("$HOME/bin")
 export PATH
 source ~/antigen.zsh
