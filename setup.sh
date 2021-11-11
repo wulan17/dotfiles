@@ -31,11 +31,11 @@ function setup(){
 			mv ~/.xinitrc ~/.xinitrc.bak
 			curl -L "$url"/.xinitrc > ~/.xinitrc
 		fi
-		if [ -z $(ls ~/.devilspie) ];then
-			mkdir ~/.devilspie
-			curl -L "$url"/opacity.ds > ~/.devilspie/opacity.ds
+		if [ -z $(ls ~/.config/picom) ];then
+			mkdir ~/.config/picom
+			curl -L "$url"/.config/picom/picom.conf > ~/.config/picom/picom.conf
 		else
-			curl -L "$url"/opacity.ds > ~/.devilspie/opacity.ds
+			curl -L "$url"/.config/picom/picom.conf > ~/.config/picom/picom.conf
 		fi
 	else
 		cp "$curr"/{.zshrc,.antigenrc} ~/
@@ -45,16 +45,10 @@ function setup(){
 			mv ~/.xinitrc ~/.xinitrc.bak
 			cp "$curr"/.xinitrc > ~/
 		fi
-		if [ -z $(ls ~/.devilspie) ];then
-			mkdir ~/.devilspie
-			cp "$curr"/opacity.ds ~/.devilspie/
-		else
-			cp "$curr"/opacity.ds ~/.devilspie/
-		fi
+		cp -r "$curr"/config/picom ~/.config/
 	fi
 }
-yay -S transset-df
-sudo pacman -Sy curl zsh xcompmgr devilspie
+sudo pacman --no-confirm -Sy curl zsh picom pipewire pipewire-pulse pipewire-media-session
 select_antigen
 setup
 echo "Set default shell..."
