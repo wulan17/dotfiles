@@ -20,35 +20,24 @@ function select_antigen(){
 			;;
 	esac
 }
+function install_depend(){
+	echo "Installing dependencies..."
+	sudo pacman --no-confirm -Sy curl zsh pipewire pipewire-pulse pipewire-media-session lxqt qt5-styleplugins dbus dbus-openrc arc-gtk-theme
+	yay -S --answerdiff N --answerclean Y --removemake --noconfirm picom-tryone-git lxqt-arc-dark-theme-git papirus-icon-theme gnome-terminal-transparency
+}
 function setup(){
 	echo "Copying files..."
-	if [ -z $(ls "$curr"/.zshrc) ];then
-		curl -L "$url"/.antigenrc > ~/.antigenrc
-		curl -L "$url"/.zshrc > ~/.zshrc
-		if [ -z $(ls ~/.xinitrc) ];then
-			curl -L "$url"/.xinitrc > ~/.xinitrc
-		else
-			mv ~/.xinitrc ~/.xinitrc.bak
-			curl -L "$url"/.xinitrc > ~/.xinitrc
-		fi
-		if [ -z $(ls ~/.config/picom) ];then
-			mkdir ~/.config/picom
-			curl -L "$url"/.config/picom/picom.conf > ~/.config/picom/picom.conf
-		else
-			curl -L "$url"/.config/picom/picom.conf > ~/.config/picom/picom.conf
-		fi
+	cp "$curr"/{.zshrc,.antigenrc} ~/
+	if [ -z $(ls ~/.xinitrc) ];then
+			cp "$curr"/.xinitrc > ~/
 	else
-		cp "$curr"/{.zshrc,.antigenrc} ~/
-		if [ -z $(ls ~/.xinitrc) ];then
-			cp "$curr"/.xinitrc > ~/
-		else
-			mv ~/.xinitrc ~/.xinitrc.bak
-			cp "$curr"/.xinitrc > ~/
-		fi
-		cp -r "$curr"/config/picom ~/.config/
+		mv ~/.xinitrc ~/.xinitrc.bak
+		cp "$curr"/.xinitrc > ~/
 	fi
+	cp -r "$curr"/config ~/
+	sed -i "s/wulan17/$(whoami)/g" "$HOME"/.config/lxqt/panel.conf
 }
-sudo pacman --no-confirm -Sy curl zsh picom pipewire pipewire-pulse pipewire-media-session
+install_depend
 select_antigen
 setup
 echo "Set default shell..."
