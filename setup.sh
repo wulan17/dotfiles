@@ -35,7 +35,7 @@ function setup(){
 		cp "$curr"/.xinitrc > ~/
 	fi
 	cp -r "$curr"/config ~/
-	sed -i "s/wulan17/$(whoami)/g" "$HOME"/.config/lxqt/panel.conf
+	sed -i "s/wulan17/$(whoami)/g" ~/.config/lxqt/panel.conf
 }
 install_depend
 select_antigen
