@@ -2,60 +2,105 @@
 export curr=$(dirname $(realpath $0))
 export url="https://github.com/wulan17/zsh-config/raw/master"
 export os=$(uname -o)
-function select_distro(){
-	echo "Select Your Operation System :"
-	echo "	1. Ubuntu, Debian, Linux Mint
-	2. Arch Linux, Manjaro"
-	echo -n "Choose : "
-	read distro
-	echo ""
-	echo "Installing zsh..."
+
+antigen="stable"
+
+while getopts ":hn" opt; do
+    case $opt in
+        h)
+            echo "Available flags: -h, -n
+    -h: Print this help message
+    -n: Install antigen nightly"
+            exit 0
+            ;;
+        n)
+            antigen="nightly"
+            ;;
+    esac
+done
+
+function detect_sudo(){
+	if [ "$EUID" -ne 0 ]; then
+		if [ -x "$(command -v doas)" ];then
+			SUDO="doas"
+		elif [ -x "$(command -v sudo)" ];then
+			SUDO="sudo"
+		else
+			echo "Please install sudo or doas"
+			exit
+		fi
+	else
+		SUDO=""
+	fi
+}
+
+function install_zsh(){
+	echo "Detecting package manager.."
+	if [ -x "$(command -v apt)" ];then
+		distro=1
+	elif [ -x "$(command -v pacman)" ];then
+		distro=2
+	else
+		echo "Your distro not supported"
+		exit
+	fi
 	case "$distro" in
 		1)
-			sudo apt update
-			sudo apt install curl zsh -y
+			echo "Debian based distribution detected"
+			echo "Installing zsh..."
+			if [ "$SUDO" != "" ];then
+				"$SUDO" apt update > /dev/null
+				"$SUDO" apt install curl zsh aria2 -y > /dev/null
+			else
+				apt update > /dev/null
+				apt install curl zsh aria2 -y > /dev/null
+			fi
 			;;
 		2)
-			sudo pacman -Sy curl zsh
+			echo "Arch linux based distribution detected"
+			echo "Installing zsh..."
+			if [ "$SUDO" != "" ];then
+				"$SUDO" pacman -Sy --noconfirm --needed curl zsh aria2 > /dev/null
+			else
+				pacman -Sy --noconfirm curl zsh aria2 > /dev/null
+			fi
 			;;
 		*)
+			echo "Your distribution is not supported by this script!"
 			exit
 			;;
 	esac
 }
-function select_antigen(){
-	echo "Choose antigen type :"
-	echo "	1. Stable
-	2. Nightly"
-	echo -n "Choose : "
-	read antigen
+
+function download_antigen(){
 	case "$antigen" in
-		1)
-			curl -L git.io/antigen > ~/antigen.zsh
+		"stable")
+			echo "Downloading antigen $antigen..."
+			curl -s -L git.io/antigen > ~/.antigen.zsh
 			;;
-		2)
-			curl -L git.io/antigen-nightly > ~/antigen.zsh
-			;;
-		*)
-			curl -L git.io/antigen > ~/antigen.zsh
+		"nightly")
+			echo "Downloading antigen $antigen..."
+			curl -s -L git.io/antigen-nightly > ~/.antigen.zsh
 			;;
 	esac
 }
+
 function setup(){
 	echo "Copying files..."
-	if [ -z $(ls "$curr"/.zshrc) ];then
-		curl -L "$url"/.antigenrc > ~/.antigenrc
-		curl -L "$url"/.zshrc > ~/.zshrc
+	if test -f "$curl"/.zshrc;then
+		cp "$curr"/.zshrc ~/
+		cp "$curr"/.antigenrc ~/
 	else
-		cp "$curr"/{.zshrc,.antigenrc} ~/
+		curl -s -L "$url"/.antigenrc > ~/.antigenrc
+		curl -s -L "$url"/.zshrc > ~/.zshrc
 	fi
 }
 
 if [ $os == "Android" ];then
 	echo "Installing zsh..."
-	pkg update -y
-	pkg install curl zsh debianutils -y
-	select_antigen
+	pkg update -y > /dev/null
+	pkg install curl zsh debianutils aria2 -y > /dev/null
+	download_antigen
 	setup
 	if [ ! -d ~/.termux ];then
 		mkdir ~/.termux
@@ -70,11 +115,16 @@ if [ $os == "Android" ];then
 	echo "Done"
 	zsh
 else
-	select_distro
-	select_antigen
+	detect_sudo
+	install_zsh
+	download_antigen
 	setup
 	echo "Set default shell..."
-	sudo chsh $(whoami) -s $(which zsh)
+	if [ "$SUDO" != "" ];then
+		"$SUDO" chsh $(whoami) -s $(which zsh)
+	else
+		chsh $(whoami) -s $(which zsh)
+	fi
 	echo "Done"
 	zsh
 fi

@@ -1,6 +1,7 @@
-path+=("$HOME/bin")
+path+=("$HOME/.local/bin")
 export PATH
-source ~/antigen.zsh
+export GPG_TTY=$(tty)
+source ~/.antigen.zsh
 antigen init ~/.antigenrc
 trackers="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 export trackers
