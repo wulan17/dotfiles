@@ -98,8 +98,18 @@ function setup(){
 
 if [ $os == "Android" ];then
 	echo "Installing zsh..."
-	pkg update -y > /dev/null
-	pkg install curl zsh debianutils aria2 -y > /dev/null
+	if [ -x "$(command -v pacman)" ];then
+		echo "Updating system..."
+		pacman -Syu --noconfirm > /dev/null
+		echo "Installing zsh..."
+		pacman -S --needed --noconfirm curl zsh aria2 > /dev/null
+	else
+		echo "Updating system..."
+		pkg update -y > /dev/null
+		pkg upgrade -y > /dev/null
+		echo "Installing zsh..."
+		pkg install curl zsh debianutils aria2 -y > /dev/null
+	fi
 	download_antigen
 	setup
 	if [ ! -d ~/.termux ];then
