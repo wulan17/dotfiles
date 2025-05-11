@@ -115,13 +115,11 @@ if [ $os == "Android" ];then
 	fi
 	download_antigen
 	setup
-	if [ ! -d ~/.termux ];then
-		mkdir ~/.termux
-	fi
-	if [ -z $(ls "$curr"/termux.properties) ];then
-		curl -L "$url"/termux.properties > .termux/termux.properties
-	else
+	mkdir -p ~/.termux
+	if test -f "$curr"/termux.properties;then
 		cp "$curr"/termux.properties ~/.termux/termux.properties
+	else
+		curl -L "$url"/termux.properties > ~/.termux/termux.properties
 	fi
 	echo "Set default shell..."
 	chsh -s zsh
