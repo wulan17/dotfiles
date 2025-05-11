@@ -40,6 +40,12 @@ function install_zsh(){
 		distro=1
 	elif [ -x "$(command -v pacman)" ];then
 		distro=2
+	elif [ -x "$(command -v yum)" ];then
+		distro=3
+	elif [ -x "$(command -v dnf)" ];then
+		distro=4
+	elif [ -x "$(command -v apk)" ];then
+		distro=5
 	else
 		echo "Your distro not supported"
 		exit
@@ -63,6 +69,35 @@ function install_zsh(){
 				"$SUDO" pacman -Sy --noconfirm --needed curl zsh aria2 > /dev/null
 			else
 				pacman -Sy --noconfirm curl zsh aria2 > /dev/null
+			fi
+			;;
+		3)
+			echo "Red Hat based distribution (using yum) detected"
+			echo "Installing zsh..."
+			if [ "$SUDO" != "" ];then
+				"$SUDO" yum install -y curl zsh aria2 > /dev/null
+			else
+				yum install -y curl zsh aria2 > /dev/null
+			fi
+			;;
+		4)
+			echo "Fedora/Red Hat based distribution (using dnf) detected"
+			echo "Installing zsh..."
+			if [ "$SUDO" != "" ];then
+				"$SUDO" dnf install -y curl zsh aria2 > /dev/null
+			else
+				dnf install -y curl zsh aria2 > /dev/null
+			fi
+			;;
+		5)
+			echo "Alpine Linux distribution detected"
+			echo "Installing zsh..."
+			if [ "$SUDO" != "" ];then
+				"$SUDO" apk update > /dev/null
+				"$SUDO" apk add curl zsh aria2 > /dev/null
+			else
+				apk update > /dev/null
+				apk add curl zsh aria2 > /dev/null
 			fi
 			;;
 		*)
