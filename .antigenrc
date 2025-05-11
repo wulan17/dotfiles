@@ -9,6 +9,6 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-syntax-highlighting
 # Select theme.
-antigen theme eastwood
+antigen bundle "$HOME"/.themes wulan17.zsh-theme --no-local-clone
 # Tell Antigen that you're done.
 antigen apply

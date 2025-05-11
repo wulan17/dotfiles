@@ -90,9 +90,12 @@ function setup(){
 	if test -f "$curl"/.zshrc;then
 		cp "$curr"/.zshrc ~/
 		cp "$curr"/.antigenrc ~/
+		cp -r .themes ~/
 	else
 		curl -s -L "$url"/.antigenrc > ~/.antigenrc
 		curl -s -L "$url"/.zshrc > ~/.zshrc
+		mkdir -p ~/.themes
+		curl -s -L "$url"/.themes/wulan17.zsh-theme > ~/.themes/wulan17.zsh-theme
 	fi
 }
 
