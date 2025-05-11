@@ -1,6 +1,6 @@
 #!/bin/bash
 export curr=$(dirname $(realpath $0))
-export url="https://github.com/wulan17/zsh-config/raw/master"
+export url="https://github.com/wulan17/dotfiles/raw/master"
 export os=$(uname -o)
 
 antigen="stable"
